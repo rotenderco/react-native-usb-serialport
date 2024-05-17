@@ -6,53 +6,80 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.1'
+        classpath("com.android.tools.build:gradle:8.3.2")
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    namespace 'com.melihyarikkaya.rnserialport'
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+    compileSdk Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 28
+        minSdk Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
         versionCode 1
         versionName "1.0"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
     }
     lintOptions {
         abortOnError false
+        disable 'GradleCompatible'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
 repositories {
+    google()
+    maven {
+        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+        url("$rootDir/../node_modules/react-native/android")
+    }
     mavenCentral()
+    flatDir {
+        dirs 'libs/'
+    }
 }
 
-dependencies {
-    implementation 'com.vdurmont:semver4j:3.1.0'
-    implementation 'com.facebook.react:react-native:+'
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
 
-    implementation fileTree(dir: 'libs', include: ['usbserial-6.0.5-release.aar'])
-    // if use below `compileOnly files` will cause
-    // java.lang.ClassNotFoundException: Didn't find class "com.felhr.usbserial.UsbSerialDevice"
-    // so have to use above `implementation fileTree` again
-    //
-    // implementation fileTree(dir: 'libs', include: ['usbserial-6.0.5-release.aar'])
-    // above works well in gradle-6.2, but in gradle-6.7.1 or higher, will cause
-    // `Direct local .aar file dependencies are not supported when building an AAR.
-    // The resulting AAR would be broken because the classes and Android resources
-    // from any local .aar file dependencies would not be packaged in the resulting
-    // AAR. Previous versions of the Android Gradle Plugin produce broken AARs in this
-    // case too (despite not throwing this error). The following direct local .aar
-    // file dependencies of the :react-native-usb-serialport project caused this error` ,
-    // so use below ref to https://stackoverflow.com/a/63665094
-    // compileOnly files('libs/usbserial-6.0.5-release.aar')
+/**
+ * The preferred build flavor of JavaScriptCore (JSC)
+ *
+ * For example, to use the international variant, you can use:
+ * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
+ *
+ * The international variant includes ICU i18n library and necessary data
+ * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
+ * give correct results when using with locales other than en-US. Note that
+ * this variant is about 6MiB larger per architecture than default.
+ */
+def jscFlavor = "org.webkit:android-jsc:+"
+
+dependencies {
+    implementation 'com.google.guava:guava:33.1.0-android'
+    implementation 'com.vdurmont:semver4j:3.1.0'
+    implementation("com.facebook.react:react-android:0.73.6")
+    implementation 'com.github.felHR85:UsbSerial:6.1.0'
+
+    if (project.hermesEnabled.toBoolean()) {
+        implementation("com.facebook.react:hermes-android:0.73.5")
+    } else {
+        implementation jscFlavor
+    }
 }
