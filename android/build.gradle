@@ -75,7 +75,8 @@ dependencies {
     implementation 'com.google.guava:guava:33.1.0-android'
     implementation 'com.vdurmont:semver4j:3.1.0'
     implementation("com.facebook.react:react-android:0.73.6")
-    implementation 'com.github.felHR85:UsbSerial:6.1.0'
+//    implementation 'com.github.felHR85:UsbSerial:6.2.1'
+    compileOnly files('libs/usbserial-6.2.1-release.aar')
 
     if (project.hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android:0.73.5")
