@@ -1,13 +1,3 @@
-// declare namespace _default {
-//     export { createServer };
-//     export { createConnection };
-//     export { Server };
-//     export { Socket };
-//     export { RNSerialport };
-//     export { definitions };
-//     export { actions };
-// }
-// export default _default;
 /**
  * @param {(socket: Socket) => void} connectionListener
  * @returns {Server}
