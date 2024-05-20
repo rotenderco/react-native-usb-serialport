@@ -1,27 +1,31 @@
-declare namespace _default {
-    export { createServer };
-    export { createConnection };
-    export { Server };
-    export { Socket };
-    export { RNSerialport };
-    export { definitions };
-    export { actions };
-}
-export default _default;
+// declare namespace _default {
+//     export { createServer };
+//     export { createConnection };
+//     export { Server };
+//     export { Socket };
+//     export { RNSerialport };
+//     export { definitions };
+//     export { actions };
+// }
+// export default _default;
 /**
  * @param {(socket: Socket) => void} connectionListener
  * @returns {Server}
  */
-declare function createServer(connectionListener: (socket: Socket) => void): Server;
+export function createServer(connectionListener: (socket: Socket) => void): Server;
 /**
  * @param {import("./Socket").ConnectionOptions} options
  * @param {() => void} callback
  * @returns {Socket}
  */
-declare function createConnection(options: import("./Socket").ConnectionOptions, callback: () => void): Socket;
+export function createConnection(options: import("./Socket").ConnectionOptions, callback: () => void): Socket;
 import { Buffer } from "buffer";
 import Server from "./Server";
 import Socket from "./Socket";
+
+export { Server };
+export { Socket };
+
 
 export interface IDevice {
   name: string;
