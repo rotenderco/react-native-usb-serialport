@@ -26,6 +26,7 @@ export interface IDevice {
 export type Devices = Array<IDevice> | null;
 
 export interface IOnReadData {
+  deviceName: string;
   payload: string | Array<number>
 }
 export interface IOnError {
@@ -256,10 +257,10 @@ interface RNSerialportStatic {
    * Writes bytes to port
    * 
    * @param {string} deviceName 
-   * @param {Buffer} data 
+   * @param {Array<number>} data 
    * @memberof RNSerialportStatic
    */
-  writeBytes(deviceName: string, data: Buffer): void;
+  writeBytes(deviceName: string, data: Array<number>): void;
 
   /**
    * Writes string to port
@@ -287,6 +288,16 @@ interface RNSerialportStatic {
    * @memberof RNSerialportStatic
    */
   writeHexString(deviceName: string, data: string): void
+
+
+  /**
+   * Set the mapping of the app bus index and the device name.
+   * 
+   * @param appBusIndex 
+   * @param deviceName 
+   * @memberof RNSerialportStatic
+   */
+  appBus2DeviceNamePut(appBusIndex: number, deviceName: string): void;
 
   /**
    * Integer array convert to Utf16 string
