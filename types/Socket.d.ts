@@ -1,7 +1,10 @@
+import { Buffer } from "buffer";
+import { EventEmitter } from "eventemitter3";
+
 /**
  * @typedef {"ascii" | "utf8" | "utf-8" | "utf16le" | "ucs2" | "ucs-2" | "base64" | "latin1" | "binary" | "hex"} BufferEncoding
  *
- * @typedef {import('react-native').NativeEventEmitter} NativeEventEmitter
+ * @typedef {import("react-native").NativeEventEmitter} NativeEventEmitter
  *
  * @typedef {{address: string, family: string, port: number}} AddressInfo
  *
@@ -13,16 +16,16 @@
  * timeout?: number,
  * localAddress?: string,
  * localPort?: number,
- * interface?: 'wifi' | 'cellular' | 'ethernet',
+ * interface?: "wifi" | "cellular" | "ethernet",
  * reuseAddress?: boolean,
  * tls?: boolean,
  * tlsCheckValidity?: boolean,
  * tlsCert?: any,
  * }} ConnectionOptions
  *
- * @extends {EventEmitter<'connect' | 'timeout' | 'data' | 'error' | 'close', any>}
+ * @extends {EventEmitter<"connect" | "timeout" | "data" | "error" | "close", any>}
  */
-export default class Socket {
+export default class Socket extends EventEmitter {
     /** @private */
     private _id;
     /** @private */
@@ -59,12 +62,12 @@ export default class Socket {
     /**
      * Sets the socket to timeout after `timeout` milliseconds of inactivity on the socket. By default `TcpSocket` do not have a timeout.
      *
-     * When an idle timeout is triggered the socket will receive a `'timeout'` event but the connection will not be severed.
+     * When an idle timeout is triggered the socket will receive a `"timeout"` event but the connection will not be severed.
      * The user must manually call `socket.end()` or `socket.destroy()` to end the connection.
      *
      * If `timeout` is 0, then the existing idle timeout is disabled.
      *
-     * The optional `callback` parameter will be added as a one-time listener for the `'timeout'` event.
+     * The optional `callback` parameter will be added as a one-time listener for the `"timeout"` event.
      *
      * @param {number} timeout
      * @param {() => void} [callback]
@@ -83,18 +86,18 @@ export default class Socket {
      * Set the encoding for the socket as a Readable Stream. By default, no encoding is assigned and stream data will be returned as `Buffer` objects.
      * Setting an encoding causes the stream data to be returned as strings of the specified encoding rather than as Buffer objects.
      *
-     * For instance, calling `socket.setEncoding('utf8')` will cause the output data to be interpreted as UTF-8 data, and passed as strings.
-     * Calling `socket.setEncoding('hex')` will cause the data to be encoded in hexadecimal string format.
+     * For instance, calling `socket.setEncoding("utf8")` will cause the output data to be interpreted as UTF-8 data, and passed as strings.
+     * Calling `socket.setEncoding("hex")` will cause the data to be encoded in hexadecimal string format.
      *
      * @param {BufferEncoding} [encoding]
      */
     setEncoding(encoding?: BufferEncoding): this;
     /**
-     * Enable/disable the use of Nagle's algorithm. When a TCP connection is created, it will have Nagle's algorithm enabled.
+     * Enable/disable the use of Nagle"s algorithm. When a TCP connection is created, it will have Nagle"s algorithm enabled.
      *
-     * Nagle's algorithm delays data before it is sent via the network. It attempts to optimize throughput at the expense of latency.
+     * Nagle"s algorithm delays data before it is sent via the network. It attempts to optimize throughput at the expense of latency.
      *
-     * Passing `true` for `noDelay` or not passing an argument will disable Nagle's algorithm for the socket. Passing false for noDelay will enable Nagle's algorithm.
+     * Passing `true` for `noDelay` or not passing an argument will disable Nagle"s algorithm for the socket. Passing false for noDelay will enable Nagle"s algorithm.
      *
      * @param {boolean} noDelay Default: `true`
      */
@@ -110,7 +113,7 @@ export default class Socket {
     setKeepAlive(enable?: boolean, initialDelay?: number): this;
     /**
      * Returns the bound `address`, the address `family` name and `port` of the socket as reported
-     * by the operating system: `{ port: 12346, family: 'IPv4', address: '127.0.0.1' }`.
+     * by the operating system: `{ port: 12346, family: "IPv4", address: "127.0.0.1" }`.
      *
      * @returns {AddressInfo | {}}
      */
@@ -176,10 +179,10 @@ export type ConnectionOptions = {
     timeout?: number;
     localAddress?: string;
     localPort?: number;
-    interface?: 'wifi' | 'cellular' | 'ethernet';
+    interface?: "wifi" | "cellular" | "ethernet";
     reuseAddress?: boolean;
     tls?: boolean;
     tlsCheckValidity?: boolean;
     tlsCert?: any;
 };
-import { Buffer } from 'buffer';
+
