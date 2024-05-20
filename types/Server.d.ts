@@ -1,9 +1,12 @@
+import { EventEmitter } from "eventemitter3";
+import Socket from "./Socket";
+
 /**
- * @extends {EventEmitter<'connection' | 'listening' | 'error' | 'close', any>}
+ * @extends {EventEmitter<"connection" | "listening" | "error" | "close", any>}
  */
-export default class Server {
+export default class Server extends EventEmitter {
     /**
-     * @param {(socket: Socket) => void} [connectionCallback] Automatically set as a listener for the `'connection'` event.
+     * @param {(socket: Socket) => void} [connectionCallback] Automatically set as a listener for the `"connection"` event.
      */
     constructor(connectionCallback?: (socket: Socket) => void);
     /** @private */
@@ -22,8 +25,8 @@ export default class Server {
     /**
      * Start a server listening for connections.
      *
-     * This function is asynchronous. When the server starts listening, the `'listening'` event will be emitted.
-     * The last parameter `callback` will be added as a listener for the `'listening'` event.
+     * This function is asynchronous. When the server starts listening, the `"listening"` event will be emitted.
+     * The last parameter `callback` will be added as a listener for the `"listening"` event.
      *
      * The `server.listen()` method can be called again if and only if there was an error during the first
      * `server.listen()` call or `server.close()` has been called. Otherwise, an `ERR_SERVER_ALREADY_LISTEN`
@@ -49,8 +52,8 @@ export default class Server {
     getConnections(callback: (err: Error | null, count: number) => void): Server;
     /**
      * Stops the server from accepting new connections and keeps existing connections.
-     * This function is asynchronous, the server is finally closed when all connections are ended and the server emits a `'close'` event.
-     * The optional callback will be called once the `'close'` event occurs. Unlike that event, it will be called with an `Error` as its
+     * This function is asynchronous, the server is finally closed when all connections are ended and the server emits a `"close"` event.
+     * The optional callback will be called once the `"close"` event occurs. Unlike that event, it will be called with an `Error` as its
      * only argument if the server was not open when it was closed.
      *
      * @param {(err?: Error) => void} [callback] Called when the server is closed.
@@ -60,11 +63,11 @@ export default class Server {
     /**
      * Returns the bound `address`, the address `family` name, and `port` of the server as reported by the operating system if listening
      * on an IP socket (useful to find which port was assigned when getting an OS-assigned address):
-     * `{ port: 12346, family: 'IPv4', address: '127.0.0.1' }`.
+     * `{ port: 12346, family: "IPv4", address: "127.0.0.1" }`.
      *
-     * @returns {import('./Socket').AddressInfo | null}
+     * @returns {import("./Socket").AddressInfo | null}
      */
-    address(): import('./Socket').AddressInfo | null;
+    address(): import("./Socket").AddressInfo | null;
     ref(): this;
     unref(): this;
     /**
@@ -79,9 +82,8 @@ export default class Server {
     private _setDisconnected;
     /**
      * @private
-     * @param {{ id: number; connection: import('./Socket').NativeConnectionInfo; }} info
+     * @param {{ id: number; connection: import("./Socket").NativeConnectionInfo; }} info
      * @returns {Socket}
      */
     private _buildSocket;
 }
-import Socket from './Socket';
