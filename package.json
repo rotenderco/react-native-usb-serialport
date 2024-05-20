@@ -42,5 +42,8 @@
     "url": "https://github.com/flyskywhy/react-native-usb-serialport.git"
   },
   "homepage": "https://github.com/flyskywhy/react-native-usb-serialport.git",
-  "types": "./types/index.d.ts"
+  "types": "./types/index.d.ts",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
 }

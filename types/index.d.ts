@@ -1,3 +1,28 @@
+declare namespace _default {
+    export { createServer };
+    export { createConnection };
+    export { Server };
+    export { Socket };
+    export { RNSerialport };
+    export { definitions };
+    export { actions };
+}
+export default _default;
+/**
+ * @param {(socket: Socket) => void} connectionListener
+ * @returns {Server}
+ */
+declare function createServer(connectionListener: (socket: Socket) => void): Server;
+/**
+ * @param {import("./Socket").ConnectionOptions} options
+ * @param {() => void} callback
+ * @returns {Socket}
+ */
+declare function createConnection(options: import("./Socket").ConnectionOptions, callback: () => void): Socket;
+import { Buffer } from "buffer";
+import Server from "./Server";
+import Socket from "./Socket";
+
 export interface IDevice {
   name: string;
   vendorId: number;
@@ -95,10 +120,11 @@ interface RNSerialportStatic {
   /**
    * Returns status via Promise
    *
+   * @param {string} deviceName
    * @returns {Promise<boolean>}
    * @memberof RNSerialportStatic
    */
-  isOpen(): Promise<boolean>
+  isOpen(deviceName: string): Promise<boolean>
 
   /**
    * Returns status boolean via Promise
@@ -220,33 +246,53 @@ interface RNSerialportStatic {
   /**
    * Closes the connection
    *
+   * @param {string} deviceName
    * @memberof RNSerialportStatic
    */
-  disconnect(): void;
+  disconnectDevice(deviceName: string): void;
+
+  /**
+   * Closes all of connections
+   * 
+   * @memberof RNSerialportStatic
+   */
+  disconnectAllDevices(): void;
+
+  /**
+   * Writes bytes to port
+   * 
+   * @param {string} deviceName 
+   * @param {Buffer} data 
+   * @memberof RNSerialportStatic
+   */
+  writeBytes(deviceName: string, data: Buffer): void;
 
   /**
    * Writes string to port
    *
+   * @param {string} deviceName 
    * @param {string} data
    * @memberof RNSerialportStatic
    */
-  writeString(data: string): void;
+  writeString(deviceName: string, data: string): void;
 
   /**
    * Writes Base64 string to port
    *
+   * @param {string} deviceName 
    * @param {string} data
    * @memberof RNSerialportStatic
    */
-  writeBase64(data: string): void;
+  writeBase64(deviceName: string, data: string): void;
 
   /**
    * Writes hex string to port
    *
+   * @param {string} deviceName 
    * @param {string} data
    * @memberof RNSerialportStatic
    */
-  writeHexString(data: string): void
+  writeHexString(deviceName: string, data: string): void
 
   /**
    * Integer array convert to Utf16 string
