@@ -18,16 +18,15 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.bridge.WritableNativeArray;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.net.Network;
+import android.os.Build;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -43,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -80,6 +80,7 @@ public class RNSerialportModule extends ReactContextBaseJavaModule implements Li
     fillDriverList();
   }
 
+  @NonNull
   @Override
   public String getName() {
     return TAG;
@@ -141,12 +142,12 @@ public class RNSerialportModule extends ReactContextBaseJavaModule implements Li
     @Override
     public void onReceive(Context arg0, Intent arg1) {
       Intent intent;
-      switch (arg1.getAction()) {
+      switch (Objects.requireNonNull(arg1.getAction())) {
         case ACTION_USB_CONNECT:
-          eventEmit(onConnectedEvent, arg1.getExtras().getString(EXTRA_USB_DEVICE_NAME));
+          eventEmit(onConnectedEvent, Objects.requireNonNull(arg1.getExtras()).getString(EXTRA_USB_DEVICE_NAME));
           break;
         case ACTION_USB_DISCONNECTED:
-          eventEmit(onDisconnectedEvent, arg1.getExtras().getString(EXTRA_USB_DEVICE_NAME));
+          eventEmit(onDisconnectedEvent, Objects.requireNonNull(arg1.getExtras()).getString(EXTRA_USB_DEVICE_NAME));
           break;
         case ACTION_USB_NOT_SUPPORTED:
           eventEmit(onErrorEvent, createError(Definitions.ERROR_DEVICE_NOT_SUPPORTED, Definitions.ERROR_DEVICE_NOT_SUPPORTED_MESSAGE));
@@ -155,8 +156,8 @@ public class RNSerialportModule extends ReactContextBaseJavaModule implements Li
           eventEmit(onErrorEvent, createError(Definitions.ERROR_COULD_NOT_OPEN_SERIALPORT, Definitions.ERROR_COULD_NOT_OPEN_SERIALPORT_MESSAGE));
           break;
         case ACTION_USB_ATTACHED: {
-          UsbDevice device = arg1.getExtras().getParcelable(UsbManager.EXTRA_DEVICE);
-          String deviceName = device.getDeviceName();
+          UsbDevice device = Objects.requireNonNull(arg1.getExtras()).getParcelable(UsbManager.EXTRA_DEVICE);
+          String deviceName = Objects.requireNonNull(device).getDeviceName();
           eventEmit(onDeviceAttachedEvent, deviceName);
           if(autoConnect && chooseFirstDevice()) {
             connectDevice(autoConnectDeviceName, autoConnectBaudRate);
@@ -164,8 +165,8 @@ public class RNSerialportModule extends ReactContextBaseJavaModule implements Li
         }
           break;
         case ACTION_USB_DETACHED: {
-          UsbDevice device = arg1.getExtras().getParcelable(UsbManager.EXTRA_DEVICE);
-          String deviceName = device.getDeviceName();
+          UsbDevice device = Objects.requireNonNull(arg1.getExtras()).getParcelable(UsbManager.EXTRA_DEVICE);
+          String deviceName = Objects.requireNonNull(device).getDeviceName();
           eventEmit(onDeviceDetachedEvent, deviceName);
           stopConnection(deviceName);
           serialPorts.remove(deviceName);
@@ -173,7 +174,7 @@ public class RNSerialportModule extends ReactContextBaseJavaModule implements Li
         }
           break;
         case ACTION_USB_PERMISSION: {
-          UsbDevice device = arg1.getExtras().getParcelable(UsbManager.EXTRA_DEVICE);
+          UsbDevice device = Objects.requireNonNull(arg1.getExtras()).getParcelable(UsbManager.EXTRA_DEVICE);
           boolean granted = arg1.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
           startConnection(device, granted);
         }
@@ -216,6 +217,7 @@ public class RNSerialportModule extends ReactContextBaseJavaModule implements Li
     return err;
   }
 
+  @SuppressLint("UnspecifiedRegisterReceiverFlag")
   private void setFilters() {
     IntentFilter filter = new IntentFilter();
     filter.addAction(ACTION_USB_PERMISSION_GRANTED);
@@ -227,7 +229,11 @@ public class RNSerialportModule extends ReactContextBaseJavaModule implements Li
     filter.addAction(ACTION_USB_PERMISSION);
     filter.addAction(ACTION_USB_ATTACHED);
     filter.addAction(ACTION_USB_DETACHED);
-    mReactContext.registerReceiver(mUsbReceiver, filter);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      mReactContext.registerReceiver(mUsbReceiver, filter, Context.RECEIVER_EXPORTED);
+    } else {
+      mReactContext.registerReceiver(mUsbReceiver, filter);
+    }
   }
 
   private void fillDriverList() {
@@ -737,7 +743,9 @@ public class RNSerialportModule extends ReactContextBaseJavaModule implements Li
   private void requestUserPermission(UsbDevice device) {
     if(device == null)
       return;
-    PendingIntent mPendingIntent = PendingIntent.getBroadcast(mReactContext, 0 , new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_MUTABLE);
+    Intent intent = new Intent(ACTION_USB_PERMISSION);
+    intent.setPackage(mReactContext.getPackageName());
+    PendingIntent mPendingIntent = PendingIntent.getBroadcast(mReactContext, 0 , intent, PendingIntent.FLAG_MUTABLE);
     usbManager.requestPermission(device, mPendingIntent);
   }
 
