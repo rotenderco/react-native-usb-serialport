@@ -91,12 +91,12 @@ interface ActionsStatic {
 }
 export var actions: ActionsStatic;
 
-type DataBits = 5 | 6 | 7 | 8;
-type StopBits = 1 | 2 | 3;
-type Parities = 0 | 1 | 2 | 3 | 4;
-type FlowControls = 0 | 1 | 2 | 3;
-type ReturnedDataTypes = 1 | 2;
-type Drivers = "AUTO" | "cdc" | "ch34x" | "cp210x" | "ftdi" | "pl2303";
+export type DataBits = 5 | 6 | 7 | 8;
+export type StopBits = 1 | 2 | 3;
+export type Parities = 0 | 1 | 2 | 3 | 4;
+export type FlowControls = 0 | 1 | 2 | 3;
+export type ReturnedDataTypes = 1 | 2;
+export type Drivers = "AUTO" | "cdc" | "ch34x" | "cp210x" | "ftdi" | "pl2303";
 
 interface RNSerialportStatic {
   /**
