@@ -212,6 +212,22 @@ interface RNSerialportStatic {
    */
   setDriver(driver: Drivers): void;
 
+  /**
+   * Set native gateway
+   * 
+   * @param isNativeGateway 
+   * @memberof RNSerialportStatic
+   */
+  setIsNativeGateway(isNativeGateway: boolean): void;
+
+  /**
+   * Set is native gateway js eventemit on serialport data
+   * 
+   * @param isNativeGatewayJsEventEmitOnSerialportData 
+   * @memberof RNSerialportStatic
+   */
+  setIsNativeGatewayJsEventEmitOnSerialportData(isNativeGatewayJsEventEmitOnSerialportData: boolean): void;
+
   //End setter methods
 
   /**

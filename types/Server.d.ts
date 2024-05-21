@@ -32,13 +32,13 @@ export default class Server extends EventEmitter {
      * `server.listen()` call or `server.close()` has been called. Otherwise, an `ERR_SERVER_ALREADY_LISTEN`
      * error will be thrown.
      *
-     * @param {{ port: number; host: string; reuseAddress?: boolean}} options
+     * @param {{ port: number; host?: string; reuseAddress?: boolean}} options
      * @param {() => void} [callback]
      * @returns {Server}
      */
     listen(options: {
         port: number;
-        host: string;
+        host?: string;
         reuseAddress?: boolean;
     }, callback?: () => void): Server;
     /**
