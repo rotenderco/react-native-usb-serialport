@@ -17,6 +17,11 @@ The usb serial port part include `.aar` library from [felHR85/UsbSerial](https:/
 The socket part copy and modify code from [react-native-tcp-socket@5.2.1](https://github.com/Rapsssito/react-native-tcp-socket/tree/v5.2.1)
 
 ## Changelog
+### [3.0.0] - 2024-08-23
+Support android targeting S+
+
+Fix `Direct local .aar file dependencies are not supported when building an AAR` when assemble release in gradle-6.7.1 or higher.
+
 ### [2.3.0] - 2021-11-05
 Remove executorService usage in writeSocketBytes, thus JAVA native gateway can have more smoother socket response rate.
 
