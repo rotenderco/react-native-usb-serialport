@@ -29,6 +29,15 @@ USB device access pop-up suppression
 ### [2.0.0] - 2021-01-22
 Add multi usb serial port connections support
 
+## Install
+
+Install `react-native-usb-serialport@3.x` in `gradle-6.7.1` and add below into your `APP/android/app/build.gradle`
+```
+    implementation fileTree(dir: '../../node_modules/react-native-usb-serialport/android/libs', include: ['*.aar'])
+```
+
+Install `react-native-usb-serialport@2.x` in `gradle-6.2-`
+
 ## Gateway Example As Usage
 ### Gateway serial port and socket server side runs in your react native APP
 ```javascript
