@@ -28,6 +28,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.net.Network;
+import android.os.Build;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
@@ -737,12 +738,10 @@ public class RNSerialportModule extends ReactContextBaseJavaModule implements Li
   private void requestUserPermission(UsbDevice device) {
     if(device == null)
       return;
-    PendingIntent mPendingIntent = null;
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-      mPendingIntent = PendingIntent.getBroadcast(mReactContext, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_MUTABLE);
-    } else {
-      mPendingIntent = PendingIntent.getBroadcast(mReactContext, 0 , new Intent(ACTION_USB_PERMISSION), 0);
-    }
+    Intent intent = new Intent(ACTION_USB_PERMISSION);
+    intent.setPackage(mReactContext.getPackageName());
+    int intentFlags = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) ? PendingIntent.FLAG_MUTABLE : 0;
+    PendingIntent mPendingIntent = PendingIntent.getBroadcast(mReactContext, 0, intent, intentFlags);
     usbManager.requestPermission(device, mPendingIntent);
   }
 

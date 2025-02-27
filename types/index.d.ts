@@ -1,3 +1,21 @@
+/**
+ * @param {(socket: Socket) => void} connectionListener
+ * @returns {Server}
+ */
+export function createServer(connectionListener: (socket: Socket) => void): Server;
+/**
+ * @param {import("./Socket").ConnectionOptions} options
+ * @param {() => void} callback
+ * @returns {Socket}
+ */
+export function createConnection(options: import("./Socket").ConnectionOptions, callback: () => void): Socket;
+import Server from "./Server";
+import Socket from "./Socket";
+
+export { Server };
+export { Socket };
+
+
 export interface IDevice {
   name: string;
   vendorId: number;
@@ -7,6 +25,7 @@ export interface IDevice {
 export type Devices = Array<IDevice> | null;
 
 export interface IOnReadData {
+  deviceName: string;
   payload: string | Array<number>
 }
 export interface IOnError {
@@ -71,12 +90,12 @@ interface ActionsStatic {
 }
 export var actions: ActionsStatic;
 
-type DataBits = 5 | 6 | 7 | 8;
-type StopBits = 1 | 2 | 3;
-type Parities = 0 | 1 | 2 | 3 | 4;
-type FlowControls = 0 | 1 | 2 | 3;
-type ReturnedDataTypes = 1 | 2;
-type Drivers = "AUTO" | "cdc" | "ch34x" | "cp210x" | "ftdi" | "pl2303";
+export type DataBits = 5 | 6 | 7 | 8;
+export type StopBits = 1 | 2 | 3;
+export type Parities = 0 | 1 | 2 | 3 | 4;
+export type FlowControls = 0 | 1 | 2 | 3;
+export type ReturnedDataTypes = 1 | 2;
+export type Drivers = "AUTO" | "cdc" | "ch34x" | "cp210x" | "ftdi" | "pl2303";
 
 interface RNSerialportStatic {
   /**
@@ -95,10 +114,11 @@ interface RNSerialportStatic {
   /**
    * Returns status via Promise
    *
+   * @param {string} deviceName
    * @returns {Promise<boolean>}
    * @memberof RNSerialportStatic
    */
-  isOpen(): Promise<boolean>
+  isOpen(deviceName: string): Promise<boolean>
 
   /**
    * Returns status boolean via Promise
@@ -191,6 +211,22 @@ interface RNSerialportStatic {
    */
   setDriver(driver: Drivers): void;
 
+  /**
+   * Set native gateway
+   * 
+   * @param isNativeGateway 
+   * @memberof RNSerialportStatic
+   */
+  setIsNativeGateway(isNativeGateway: boolean): void;
+
+  /**
+   * Set is native gateway js eventemit on serialport data
+   * 
+   * @param isNativeGatewayJsEventEmitOnSerialportData 
+   * @memberof RNSerialportStatic
+   */
+  setIsNativeGatewayJsEventEmitOnSerialportData(isNativeGatewayJsEventEmitOnSerialportData: boolean): void;
+
   //End setter methods
 
   /**
@@ -220,33 +256,63 @@ interface RNSerialportStatic {
   /**
    * Closes the connection
    *
+   * @param {string} deviceName
    * @memberof RNSerialportStatic
    */
-  disconnect(): void;
+  disconnectDevice(deviceName: string): void;
+
+  /**
+   * Closes all of connections
+   * 
+   * @memberof RNSerialportStatic
+   */
+  disconnectAllDevices(): void;
+
+  /**
+   * Writes bytes to port
+   * 
+   * @param {string} deviceName 
+   * @param {Array<number>} data 
+   * @memberof RNSerialportStatic
+   */
+  writeBytes(deviceName: string, data: Array<number>): void;
 
   /**
    * Writes string to port
    *
+   * @param {string} deviceName 
    * @param {string} data
    * @memberof RNSerialportStatic
    */
-  writeString(data: string): void;
+  writeString(deviceName: string, data: string): void;
 
   /**
    * Writes Base64 string to port
    *
+   * @param {string} deviceName 
    * @param {string} data
    * @memberof RNSerialportStatic
    */
-  writeBase64(data: string): void;
+  writeBase64(deviceName: string, data: string): void;
 
   /**
    * Writes hex string to port
    *
+   * @param {string} deviceName 
    * @param {string} data
    * @memberof RNSerialportStatic
    */
-  writeHexString(data: string): void
+  writeHexString(deviceName: string, data: string): void
+
+
+  /**
+   * Set the mapping of the app bus index and the device name.
+   * 
+   * @param appBusIndex 
+   * @param deviceName 
+   * @memberof RNSerialportStatic
+   */
+  appBus2DeviceNamePut(appBusIndex: number, deviceName: string): void;
 
   /**
    * Integer array convert to Utf16 string

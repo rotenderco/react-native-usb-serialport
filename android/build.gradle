@@ -1,4 +1,5 @@
 
+
 buildscript {
     repositories {
         google()
@@ -6,38 +7,77 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.1'
+        classpath("com.android.tools.build:gradle:8.3.2")
     }
 }
 
-apply plugin: 'com.android.library'
+apply plugin: "com.android.library"
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    namespace "com.melihyarikkaya.rnserialport"
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+    compileSdk Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 28
+        minSdk Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
         versionCode 1
         versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
     }
     lintOptions {
         abortOnError false
+        disable "GradleCompatible"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
 repositories {
+    google()
+    maven {
+        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+        url("$rootDir/../node_modules/react-native/android")
+    }
     mavenCentral()
 }
 
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+/**
+ * The preferred build flavor of JavaScriptCore (JSC)
+ *
+ * For example, to use the international variant, you can use:
+ * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
+ *
+ * The international variant includes ICU i18n library and necessary data
+ * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
+ * give correct results when using with locales other than en-US. Note that
+ * this variant is about 6MiB larger per architecture than default.
+ */
+def jscFlavor = "org.webkit:android-jsc:+"
+
 dependencies {
-    implementation 'com.vdurmont:semver4j:3.1.0'
-    implementation 'com.facebook.react:react-native:+'
-    compileOnly fileTree(dir: 'libs', include: ['*.aar'])
+    implementation "com.google.guava:guava:33.1.0-android"
+    implementation "com.vdurmont:semver4j:3.1.0"
+    implementation("com.facebook.react:react-android:0.73.6")
+    compileOnly fileTree(dir: "libs", include: ["*.aar"])
+
+    if (project.hermesEnabled.toBoolean()) {
+        implementation("com.facebook.react:hermes-android:0.73.5")
+    } else {
+        implementation jscFlavor
+    }
 }
